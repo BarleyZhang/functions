@@ -256,5 +256,16 @@ class Functions
     }
 
 
+    /**
+     * XML转Array
+     * @param $xml
+     * @return array
+     */
+    public static function toArray($xml){
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
+        $result= json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+        return $result;
+    }
 	
 }
