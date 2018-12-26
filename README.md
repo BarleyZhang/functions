@@ -20,3 +20,5 @@
 9. delDirAndFile($path, $delDir = FALSE)                           删除文件和文件夹
 
 10. arr2xml($data, $root = true)                                   将数组转换为xml
+
+11. arrToStr ($array)                                              数组转为字符串
