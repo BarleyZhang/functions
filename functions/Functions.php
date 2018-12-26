@@ -223,6 +223,38 @@ class Functions
         return date($format, $time);
     }
 
+    /**
+     * 保留键值,二维数组去重
+     * @param $array2D
+     * @param bool $stkeep
+     * @param bool $ndformat
+     * @return mixed
+     */
+    public static function unique_arr($array2D,$stkeep=false,$ndformat=true){
+        $joinstr='+++++';
+        // 判断是否保留一级数组键 (一级数组键可以为非数字)
+        if($stkeep) $stArr = array_keys($array2D);
+        // 判断是否保留二级数组键 (所有二级数组键必须相同)
+        if($ndformat) $ndArr = array_keys(end($array2D));
+        //降维,也可以用implode,将一维数组转换为用逗号连接的字符串
+        foreach ($array2D as $v){
+            $v = join($joinstr,$v);
+            $temp[] = $v;
+        }
+        //去掉重复的字符串,也就是重复的一维数组
+        $temp = array_unique($temp);
+        //再将拆开的数组重新组装
+        foreach ($temp as $k => $v){
+            if($stkeep) $k = $stArr[$k];
+            if($ndformat){
+                $tempArr = explode($joinstr,$v);
+                foreach($tempArr as $ndkey => $ndval) $output[$k][$ndArr[$ndkey]] = $ndval;
+            }
+            else $output[$k] = explode($joinstr,$v);
+        }
+        return $output;
+    }
+
 
 	
 }
