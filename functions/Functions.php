@@ -267,5 +267,30 @@ class Functions
         $result= json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
         return $result;
     }
+
+    /**
+     * 删除文件和文件夹
+     * @param $path
+     * @param bool $delDir
+     * @return bool
+     */
+    function delDirAndFile($path, $delDir = FALSE) {
+        $handle = opendir($path);
+        if ($handle) {
+            while (false !== ( $item = readdir($handle) )) {
+                if ($item != "." && $item != "..")
+                    is_dir("$path/$item") ? delDirAndFile("$path/$item", $delDir) : unlink("$path/$item");
+            }
+            closedir($handle);
+            if ($delDir)
+                return rmdir($path);
+        }else {
+            if (file_exists($path)) {
+                return unlink($path);
+            } else {
+                return FALSE;
+            }
+        }
+    }
 	
 }
