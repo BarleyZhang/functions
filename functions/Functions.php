@@ -167,7 +167,7 @@ class Functions
      * @param bool $withself 是否删除自身
      * @return boolean
      */
-    function rmdirs($dirname, $withself = true)
+    public static function rmdirs($dirname, $withself = true)
     {
         if (!is_dir($dirname))
             return false;
@@ -190,7 +190,7 @@ class Functions
      * @param    string $file 文件或目录
      * @return    bool
      */
-    function is_really_writable($file)
+    public static function is_really_writable($file)
     {
         if (DIRECTORY_SEPARATOR === '/') {
             return is_writable($file);
@@ -210,5 +210,19 @@ class Functions
         fclose($fp);
         return TRUE;
     }
+
+    /**
+     * 将时间戳转换为日期时间
+     * @param int $time 时间戳
+     * @param string $format 日期时间格式
+     * @return string
+     */
+    public static function datetime($time, $format = 'Y-m-d H:i:s')
+    {
+        $time = is_numeric($time) ? $time : strtotime($time);
+        return date($format, $time);
+    }
+
+
 	
 }
