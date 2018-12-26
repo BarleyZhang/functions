@@ -1,7 +1,8 @@
 # functions
 项目中常用的一些公用方法
 
-1. cleanhtml($str,$tags='<p><br><img>')                            去除html标签
+1. cleanhtml($str,$tags="")
+        去除html标签                        
 
 2. splitArray($array, $groupNum)                                   将数组分为指定个数
 
