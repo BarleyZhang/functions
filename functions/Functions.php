@@ -64,5 +64,23 @@ class Functions
         $arr = json_decode($response, 1);
         return $arr;
     }
+
+    /**
+     * 去除html标签
+     * @param $str
+     * @param string $tags 标签
+     * @return string 去除后的html
+     */
+    public static function cleanhtml($str,$tags='<p><br><img>'){
+        $search = array(
+            '@<script[^>]*?>.*?</script>@si',// 除去JavaScript
+            '@<[\/\!]*?[^<>]*?>@si',//除去html标记*/
+            '@<style[^>]*?>.*?</style>@siU',// Strip style tags properly
+            '@<![\s\S]*?--[ \t\n\r]*>@'// 带多行注释包括CDATA
+        );
+        $str = preg_replace($search,'', $str);
+        $str = strip_tags($str,$tags);
+        return $str;
+    }
 	
 }
