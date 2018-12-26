@@ -134,5 +134,31 @@ class Functions
         }
         return $result;
     }
+
+    /**
+     * 复制文件夹
+     * @param string $source 源文件夹
+     * @param string $dest 目标文件夹
+     */
+    public static function copydirs($source, $dest)
+    {
+        define('DS', DIRECTORY_SEPARATOR);
+        if (!is_dir($dest)) {
+            mkdir($dest, 0755, true);
+        }
+        foreach (
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST) as $item
+        ) {
+            if ($item->isDir()) {
+                $sontDir = $dest . DS . $iterator->getSubPathName();
+                if (!is_dir($sontDir)) {
+                    mkdir($sontDir, 0755, true);
+                }
+            } else {
+                copy($item, $dest . DS . $iterator->getSubPathName());
+            }
+        }
+    }
 	
 }
