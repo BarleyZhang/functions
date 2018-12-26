@@ -1,0 +1,21 @@
+{
+    "name": "barley/functions",
+    "description": "Common methods commonly used in projects",
+    "type": "library",
+    "require": {
+        "php": ">=5.4"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "BarleyZhang",
+            "email": "guizi0403@163.com"
+        }
+    ],
+    "autoload": {
+    	"psr-4": {
+    		"barley\\functions\\": "functions"
+    	}
+    },
+    "minimum-stability": "stable"
+}
