@@ -1,6 +1,19 @@
 # functions
 项目中常用的一些公用方法
 
+#引入方法
+`include_once __DIR__.'/vendor/autoload.php';`
+`$barley = new barley\functions\Functions;`
+`$is_writable = $barley->is_really_writable('/');`
+
+如果是框架中的话,使用命名空间
+use barley\functions\Functions as BarleyFunctions;
+起个自己觉得方便的别名,使用方法如下:
+`$ok = BarleyFunctions::is_really_writable('/');`
+也可以这样:
+`$ok = new BarleyFunctions();
+ $ok = $info->is_really_writable('/');`
+
 1. cleanhtml($str,$tags="")
         去除html标签                        
 

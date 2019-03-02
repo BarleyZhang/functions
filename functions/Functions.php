@@ -274,7 +274,7 @@ class Functions
      * @param bool $delDir
      * @return bool
      */
-    function delDirAndFile($path, $delDir = FALSE) {
+    public static function delDirAndFile($path, $delDir = FALSE) {
         $handle = opendir($path);
         if ($handle) {
             while (false !== ( $item = readdir($handle) )) {
