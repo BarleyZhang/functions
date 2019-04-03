@@ -1,12 +1,13 @@
 <?php
 namespace barley\functions;
+
 /**
  * 常用公共方法
  */
 
 class Functions
 {
-	/**
+    /**
      * CURL请求
      * @param $url 请求url地址
      * @param $method 请求方法 get post
@@ -37,11 +38,11 @@ class Functions
                 curl_setopt($ci, CURLOPT_CUSTOMREQUEST, $method); /* //设置请求方式 */
                 break;
         }
-        $ssl = preg_match('/^https:\/\//i', $url) ? TRUE : FALSE;
+        $ssl = preg_match('/^https:\/\//i', $url) ? true : false;
         curl_setopt($ci, CURLOPT_URL, $url);
         if ($ssl) {
-            curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-            curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, FALSE); // 不从证书中检查SSL加密算法是否存在
+            curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, false); // https请求 不验证证书和hosts
+            curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, false); // 不从证书中检查SSL加密算法是否存在
         }
         //curl_setopt($ci, CURLOPT_HEADER, true); /*启用时会将头文件的信息作为数据流输出*/
         curl_setopt($ci, CURLOPT_FOLLOWLOCATION, 1);
@@ -71,15 +72,16 @@ class Functions
      * @param string $tags 标签
      * @return string 去除后的html
      */
-    public static function cleanhtml($str,$tags='<p><br><img>'){
+    public static function cleanhtml($str, $tags='<p><br><img>')
+    {
         $search = array(
             '@<script[^>]*?>.*?</script>@si',// 除去JavaScript
             '@<[\/\!]*?[^<>]*?>@si',//除去html标记*/
             '@<style[^>]*?>.*?</style>@siU',// Strip style tags properly
             '@<![\s\S]*?--[ \t\n\r]*>@'// 带多行注释包括CDATA
         );
-        $str = preg_replace($search,'', $str);
-        $str = strip_tags($str,$tags);
+        $str = preg_replace($search, '', $str);
+        $str = strip_tags($str, $tags);
         return $str;
     }
 
@@ -88,8 +90,11 @@ class Functions
      * @param array $array 要分割的数组
      * @param int $groupNum 分的组数
      */
-    public static function splitArray($array, $groupNum){
-        if(empty($array)) return array();
+    public static function splitArray($array, $groupNum)
+    {
+        if (empty($array)) {
+            return array();
+        }
 
         //数组的总长度
         $allLength = count($array);
@@ -106,15 +111,15 @@ class Functions
         //结果集
         $result = array();
 
-        if($enum > 0){
+        if ($enum > 0) {
             //被分数组中 能整除 分成数组中元素个数 的部分
             $firstLength = $enum * $groupNum;
             $firstArray = array();
-            for($i=0; $i<$firstLength; $i++){
+            for ($i=0; $i<$firstLength; $i++) {
                 array_push($firstArray, $array[$i]);
                 unset($array[$i]);
             }
-            for($i=0; $i<$groupNum; $i++){
+            for ($i=0; $i<$groupNum; $i++) {
 
                 //从原数组中的指定开始位置和长度 截取元素放到新的数组中
                 $result[] = array_slice($firstArray, $start, $enum);
@@ -124,11 +129,11 @@ class Functions
             }
             //数组剩余部分分别加到结果集的前几项中
             $secondLength = $allLength - $firstLength;
-            for($i=0; $i<$secondLength; $i++){
+            for ($i=0; $i<$secondLength; $i++) {
                 array_push($result[$i], $array[$i + $firstLength]);
             }
-        }else{
-            for($i=0; $i<$allLength; $i++){
+        } else {
+            for ($i=0; $i<$allLength; $i++) {
                 $result[] = array_slice($array, $i, 1);
             }
         }
@@ -148,7 +153,9 @@ class Functions
         }
         foreach (
             $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST) as $item
+                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::SELF_FIRST
+            ) as $item
         ) {
             if ($item->isDir()) {
                 $sontDir = $dest . DS . $iterator->getSubPathName();
@@ -169,10 +176,12 @@ class Functions
      */
     public static function rmdirs($dirname, $withself = true)
     {
-        if (!is_dir($dirname))
+        if (!is_dir($dirname)) {
             return false;
+        }
         $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($dirname, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST
+            new RecursiveDirectoryIterator($dirname, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($files as $fileinfo) {
@@ -197,18 +206,18 @@ class Functions
         }
         if (is_dir($file)) {
             $file = rtrim($file, '/') . '/' . md5(mt_rand());
-            if (($fp = @fopen($file, 'ab')) === FALSE) {
-                return FALSE;
+            if (($fp = @fopen($file, 'ab')) === false) {
+                return false;
             }
             fclose($fp);
             @chmod($file, 0777);
             @unlink($file);
-            return TRUE;
-        } elseif (!is_file($file) OR ($fp = @fopen($file, 'ab')) === FALSE) {
-            return FALSE;
+            return true;
+        } elseif (!is_file($file) or ($fp = @fopen($file, 'ab')) === false) {
+            return false;
         }
         fclose($fp);
-        return TRUE;
+        return true;
     }
 
     /**
@@ -230,27 +239,37 @@ class Functions
      * @param bool $ndformat
      * @return mixed
      */
-    public static function unique_arr($array2D,$stkeep=false,$ndformat=true){
+    public static function unique_arr($array2D, $stkeep=false, $ndformat=true)
+    {
         $joinstr='+++++';
         // 判断是否保留一级数组键 (一级数组键可以为非数字)
-        if($stkeep) $stArr = array_keys($array2D);
+        if ($stkeep) {
+            $stArr = array_keys($array2D);
+        }
         // 判断是否保留二级数组键 (所有二级数组键必须相同)
-        if($ndformat) $ndArr = array_keys(end($array2D));
+        if ($ndformat) {
+            $ndArr = array_keys(end($array2D));
+        }
         //降维,也可以用implode,将一维数组转换为用逗号连接的字符串
-        foreach ($array2D as $v){
-            $v = join($joinstr,$v);
+        foreach ($array2D as $v) {
+            $v = join($joinstr, $v);
             $temp[] = $v;
         }
         //去掉重复的字符串,也就是重复的一维数组
         $temp = array_unique($temp);
         //再将拆开的数组重新组装
-        foreach ($temp as $k => $v){
-            if($stkeep) $k = $stArr[$k];
-            if($ndformat){
-                $tempArr = explode($joinstr,$v);
-                foreach($tempArr as $ndkey => $ndval) $output[$k][$ndArr[$ndkey]] = $ndval;
+        foreach ($temp as $k => $v) {
+            if ($stkeep) {
+                $k = $stArr[$k];
             }
-            else $output[$k] = explode($joinstr,$v);
+            if ($ndformat) {
+                $tempArr = explode($joinstr, $v);
+                foreach ($tempArr as $ndkey => $ndval) {
+                    $output[$k][$ndArr[$ndkey]] = $ndval;
+                }
+            } else {
+                $output[$k] = explode($joinstr, $v);
+            }
         }
         return $output;
     }
@@ -261,7 +280,8 @@ class Functions
      * @param $xml
      * @return array
      */
-    public static function toArray($xml){
+    public static function toArray($xml)
+    {
         //禁止引用外部xml实体
         libxml_disable_entity_loader(true);
         $result= json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
@@ -274,21 +294,24 @@ class Functions
      * @param bool $delDir
      * @return bool
      */
-    public static function delDirAndFile($path, $delDir = FALSE) {
+    public static function delDirAndFile($path, $delDir = false)
+    {
         $handle = opendir($path);
         if ($handle) {
-            while (false !== ( $item = readdir($handle) )) {
-                if ($item != "." && $item != "..")
+            while (false !== ($item = readdir($handle))) {
+                if ($item != "." && $item != "..") {
                     is_dir("$path/$item") ? delDirAndFile("$path/$item", $delDir) : unlink("$path/$item");
+                }
             }
             closedir($handle);
-            if ($delDir)
+            if ($delDir) {
                 return rmdir($path);
-        }else {
+            }
+        } else {
             if (file_exists($path)) {
                 return unlink($path);
             } else {
-                return FALSE;
+                return false;
             }
         }
     }
@@ -300,18 +323,23 @@ class Functions
      *  @param bool $root   是否要根节点
      *  @return string     xml字符串
      */
-    public static function arr2xml($data, $root = true){
+    public static function arr2xml($data, $root = true)
+    {
         $str="";
-        if($root)$str .= "<xml>";
-        foreach($data as $key => $val){
-            if(is_array($val)){
+        if ($root) {
+            $str .= "<xml>";
+        }
+        foreach ($data as $key => $val) {
+            if (is_array($val)) {
                 $child = arr2xml($val, false);
                 $str .= "<$key>$child</$key>";
-            }else{
+            } else {
                 $str.= "<$key><![CDATA[$val]]></$key>";
             }
         }
-        if($root)$str .= "</xml>";
+        if ($root) {
+            $str .= "</xml>";
+        }
         return $str;
     }
 
@@ -320,7 +348,7 @@ class Functions
      * @param $array
      * @return 字符串
      */
-    public static function arrToStr ($array)
+    public static function arrToStr($array)
     {
         // 定义存储所有字符串的数组
         static $r_arr = array();
@@ -333,7 +361,7 @@ class Functions
                     $r_arr[] = $value;
                 }
             }
-        } else if (is_string($array)) {
+        } elseif (is_string($array)) {
             $r_arr[] = $array;
         }
         //数组去重
@@ -341,28 +369,52 @@ class Functions
         $string = implode(",", $r_arr);
         return $string;
     }
-	
-}
 
-/**
+
+    /**
  * 检查手机格式，中国手机不带国家代码，国际手机号格式为：国家代码-手机号
  * @param $mobile
  * @return bool
  */
-public static function check_mobile($mobile)
-{
-    if (preg_match('/(^(13\d|14\d|15\d|16\d|17\d|18\d|19\d)\d{8})$/', $mobile)) {
-        return true;
-    } else {
-        if (preg_match('/^\d{1,4}-\d{5,11}$/', $mobile)) {
-            if (preg_match('/^\d{1,4}-0+/', $mobile)) {
-                //不能以0开头
-                return false;
+    public static function check_mobile($mobile)
+    {
+        if (preg_match('/(^(13\d|14\d|15\d|16\d|17\d|18\d|19\d)\d{8})$/', $mobile)) {
+            return true;
+        } else {
+            if (preg_match('/^\d{1,4}-\d{5,11}$/', $mobile)) {
+                if (preg_match('/^\d{1,4}-0+/', $mobile)) {
+                    //不能以0开头
+                    return false;
+                }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
+    }
 
-        return false;
+
+    //计算两个经纬度之间的距离
+    public static function getDistance($lat1, $lng1, $lat2, $lng2)
+    {
+
+        //将角度转为狐度
+
+        $radLat1 = deg2rad($lat1); //deg2rad()函数将角度转换为弧度
+
+        $radLat2 = deg2rad($lat2);
+
+        $radLng1 = deg2rad($lng1);
+
+        $radLng2 = deg2rad($lng2);
+
+        $a = $radLat1 - $radLat2;
+
+        $b = $radLng1 - $radLng2;
+
+        $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2))) * 6378.137;
+
+        return $s;
     }
 }
