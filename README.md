@@ -36,3 +36,5 @@ use barley\functions\Functions as BarleyFunctions;
 10. arr2xml($data, $root = true)                                   将数组转换为xml
 
 11. arrToStr ($array)                                              数组转为字符串
+
+12. getDistance($lat1, $lng1, $lat2, $lng2)                         计算两个经纬度的之间的距离
