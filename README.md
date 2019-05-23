@@ -14,29 +14,27 @@ use barley\functions\Functions as BarleyFunctions;
 `$ok = new BarleyFunctions();
  $ok = $info->is_really_writable('/');`
 
-1. cleanhtml($str,$tags="")
-        去除html标签                        
+1. `cleanhtml($str,$tags="")                                       去除html标签`
 
-2. splitArray($array, $groupNum)                                   将数组分为指定个数
+2. `splitArray($array, $groupNum)                                   将数组分为指定个数`
 
-3. copydirs($source, $dest)                                        复制文件夹
+3. `copydirs($source, $dest)                                        复制文件夹`
 
-4. rmdirs($dirname, $withself = true)                              删除文件夹
+4. `rmdirs($dirname, $withself = true)                              删除文件夹`
 
-5. is_really_writable($file)                                       判断文件或文件夹是否可写
+5. `is_really_writable($file)                                       判断文件或文件夹是否可写`
 
-6. datetime($time, $format = 'Y-m-d H:i:s')                        将时间戳转换为日期时间
+6. `datetime($time, $format = 'Y-m-d H:i:s')                        将时间戳转换为日期时间`
 
-7. unique_arr($array2D,$stkeep=false,$ndformat=true)               保留键值,二维数组去重               
+7. `unique_arr($array2D,$stkeep=false,$ndformat=true)               保留键值,二维数组去重`               
+8. `toArray($xml)                                                   XML转Array`
 
-8. toArray($xml)                                                   XML转Array
+9. `delDirAndFile($path, $delDir = FALSE)                           删除文件和文件夹`
 
-9. delDirAndFile($path, $delDir = FALSE)                           删除文件和文件夹
+10. `arr2xml($data, $root = true)                                   将数组转换为xml`
 
-10. arr2xml($data, $root = true)                                   将数组转换为xml
+11. `arrToStr ($array)                                              数组转为字符串`
 
-11. arrToStr ($array)                                              数组转为字符串
+12. `getDistance($lat1, $lng1, $lat2, $lng2)                        计算两个经纬度的之间的距离`
 
-12. getDistance($lat1, $lng1, $lat2, $lng2)                        计算两个经纬度的之间的距离
-
-13. mutiarray_sort($muti_array, $field, $type=1)                   二维数组根据指定键的值进行升序或是降序排序
+13. `mutiarray_sort($muti_array, $field, $type=1)        二维数组根据指定键的值进行升序或是降序排序`
