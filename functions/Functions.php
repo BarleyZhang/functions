@@ -417,4 +417,29 @@ class Functions
 
         return $s;
     }
+
+    /**
+     * 二维数组根据指定键的值进行升序或是降序排序
+     *
+     * @param [type] $array  要排序的数组
+     * @param [type] $field  根据数组中的那个字段
+     * @param integer $type  默认1是升序,2是降序
+     *
+     * @return void
+     */
+    public static function mutiarray_sort($muti_array, $field, $type=1)
+    {
+        //根据字段$field对数组$array进行降序排列
+        $sort_fields = array_column($muti_array, $field);
+        switch ($type) {
+            case 1:
+                array_multisort($sort_fields, SORT_ASC, $muti_array);
+                break;
+            case 2:
+                array_multisort($sort_fields, SORT_DESC, $muti_array);
+                break;
+        }
+        
+        return $muti_array;
+    }
 }
