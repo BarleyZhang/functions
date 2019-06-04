@@ -38,3 +38,5 @@ use barley\functions\Functions as BarleyFunctions;
 12. `getDistance($lat1, $lng1, $lat2, $lng2)                        计算两个经纬度的之间的距离`
 
 13. `mutiarray_sort($muti_array, $field, $type=1)        二维数组根据指定键的值进行升序或是降序排序`
+
+13. `objectToArray($object)                                         对象转数组`

@@ -442,4 +442,26 @@ class Functions
         
         return $muti_array;
     }
+
+    /**
+     * 对象转数组
+     *
+     * @param [type] $object
+     *
+     * @return void
+     */
+    public static function objectToArray($object)
+    {
+        $result = array();
+
+        $object = is_object($object) ? get_object_vars($object) : $object;
+
+        foreach ($object as $key => $val) {
+            $val = (is_object($val) || is_array($val)) ? $this->objectToArray($val) : $val;
+
+            $result[$key] = $val;
+        }
+
+        return $result;
+    }
 }
