@@ -457,7 +457,7 @@ class Functions
         $object = is_object($object) ? get_object_vars($object) : $object;
 
         foreach ($object as $key => $val) {
-            $val = (is_object($val) || is_array($val)) ? $this->objectToArray($val) : $val;
+            $val = (is_object($val) || is_array($val)) ? self::objectToArray($val) : $val;
 
             $result[$key] = $val;
         }
