@@ -734,4 +734,18 @@ class Functions
 
         return json_encode($data, 320);
     }
+    
+
+    /**
+     * 生成两个数之间的随机小数(float)
+     *
+     * @param integer $min
+     * @param integer $max
+     *
+     * @return float
+     */
+    public static function randFloat($min=9, $max=15)
+    {
+        return $min + mt_rand()/mt_getrandmax() * ($max-$min);
+    }
 }
