@@ -442,4 +442,296 @@ class Functions
         
         return $muti_array;
     }
+
+    /**
+     * 对象转数组
+     */
+    public static function object2array($obj)
+    {
+        if (is_object($obj)) {
+            $obj = get_object_vars($obj);
+        }
+    
+        if (is_array($obj)) {
+            return array_map(__FUNCTION__, $obj);
+        } else {
+            return $obj;
+        }
+    }
+
+    /**
+     * 文件上传,tp5使用
+     */
+    public static function file2project($keyword = 'file', $keep_name = false)
+    {
+        $file = request()->file($keyword);
+        $path = ROOT_PATH.'public'.DS.'uploads';
+
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if ($file) {
+            if ($keep_name) {
+                $info = $file->move($path, '');
+            } else {
+                $info = $file->move($path);
+            }
+
+            if ($info) {
+                $file_patah = '/uploads/'.$info->getSaveName();
+
+                return str_replace('\\', '/', $file_patah);
+            } else {
+                echo $file->getError();
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+ * mongo恢复备份的数据库文件
+ *
+ * @param      $bak_path   备份文件的路径,需要加上备份的数据库的文件夹名称:例如:D:/bak/iots
+ * @param null $mongo_path mongodb的安装目录,必须指向bin目录
+ * @param null $host       host
+ * @param null $port       端口
+ * @param null $username   用户名
+ * @param null $password   密码
+ * @param null $database   要恢复的数据库的名字
+ *
+ * @return int
+ */
+    public static function mongo_recover($bak_path, $mongo_path = null, $host = null, $port = null, $username = null, $password = null, $database = null)
+    {
+        //数据库账号
+        $db_user = $username ?? "";
+        //数据库密码
+        $db_pwd = $password ?? "";
+        //host
+        $host = $host ?? "127.0.0.1";
+        $port = $port ?? "27017";
+        //数据库名
+        $db_name = $database ?? "iots";
+        if (!is_dir($bak_path)) {
+            return 1;
+        }
+        //mongo路径,文件夹不能有空格
+        $mongo     = $mongo_path ?? "D:/bin";
+        $dump_path = str_replace('\\', '/', $mongo).'/'.'mongorestore';
+        //要执行的命令
+        $exec = $dump_path." -h ".$host.':'.$port." -d ".$db_name.' '.$bak_path;
+
+        exec($exec, $info, $status);
+
+        return $status;
+    }
+
+    /**
+ * mongo备份文件
+ *
+ * @param      $bak_path   数据备份的路径,全路径
+ * @param null $mongo_path mongodb安装路径,必须指定到bin目录下
+ * @param null $host       mongodb的使用的host
+ * @param null $username   用户名
+ * @param null $password   密码
+ * @param null $database   要备份的数据库
+ *
+ * @return mixed
+ */
+    public static function mongo_bak($bak_path, $mongo_path = null, $host = null, $port = null, $username = null, $password = null, $database = null)
+    {
+        //数据库账号
+        $db_user = $username ?? "";
+        //数据库密码
+        $db_pwd = $password ?? "";
+        //host
+        $host = $host ?? "127.0.0.1";
+        $port = $port ?? "27017";
+        //数据库名
+        $db_name = $database ?? "iots";
+
+        //数据库文件存储路径
+        if (!is_dir($bak_path)) {
+            mkdir($bak_path, '0777', true);
+        }
+
+        //mongo路径,文件夹不能有空格
+        $mongo     = $mongo_path ?? "D:/bin";
+        $dump_path = str_replace('\\', '/', $mongo).'/'.'mongodump';
+        //要执行的命令
+        $exec = $dump_path." -h ".$host.':'.$port." -d ".$db_name.' -o '.$bak_path;
+
+        exec($exec, $info, $status);
+
+        return $status;
+    }
+
+    /**
+     * 解压文件
+     *
+     * @param $file    压缩文件zip
+     * @param $output  要解压缩到的目录
+     *
+     * @return bool
+     */
+    public static function un_zip($file, $output)
+    {
+        $zip  = new ZipArchive();
+        $open = $zip->open($file);
+        if ($open === true) {
+            $xx = $zip->extractTo($output);
+            $zip->close();
+
+            return true;
+        }
+    }
+
+    /**
+ * 程序恢复公共方法
+ *
+ * @param $zip_file   压缩文件的全路径:例如:D:/file.zip
+ * @param $to_path    要恢复的目录名:例如:D:/project
+ *
+ * @return \app\index\controller\booleam
+ */
+    public static function project_recover($zip_file, $to_path)
+    {
+        $zip          = new ZipClass();
+        $unzip_result = $zip->unzip($zip_file, $to_path);
+
+        return $unzip_result;
+    }
+
+
+    /**
+ * 备份文件(程序整体备份)
+ *
+ * @param $bak_name  备份的名字,全路径加备份文件名字:例如: D:/bak.zip
+ * @param $bak_dir   要备份的文件夹,例如: D:/project
+ *
+ * @return \app\index\controller\booleam
+ */
+    public static function project_bak($bak_name, $bak_dir)
+    {
+        $zip        = new ZipClass();
+        $zip_result = $zip->zip($bak_name, $bak_dir);
+
+        return $zip_result;
+    }
+
+    /**
+ * mysql 根据sql文件恢复数据
+ *
+ * @param      $data_path  sql文件的全路径,例:D:/xx.sql
+ * @param null $mysql_path mysql的安装路径,需要到安装目录的bin目录下
+ * @param null $username   数据库用户名
+ * @param null $password   数据库密码
+ * @param null $database   要导入的数据库,如果不存在需要先创建
+ *
+ * @return int 成功返回0,失败返回1
+ */
+    public static function mysql_recover($data_path, $mysql_path = null, $username = null, $password = null, $database = null)
+    {
+        //设置时区,以防时区不正常的时候引起的错误
+        date_default_timezone_set("Asia/Shanghai");
+
+        //数据库账号
+        $db_user = $username ?? config('database.username');
+        //数据库密码
+        $db_pwd = $password ?? config('database.password');
+        //数据库名
+        $db_name = $database ?? config('database.database');
+        //数据库文件存储路径
+        if (!is_file($data_path)) {
+            return 1;
+        }
+        $name = str_replace('\\', '/', $data_path);
+        //mysql路径
+        $mysql     = $mysql_path ?? "D:/phpStudy/PHPTutorial/MySQL/bin";
+        $dump_path = str_replace('\\', '/', $mysql).'/'.'mysql ';
+        //要执行的命令
+        $exec = $dump_path." -u".$db_user." -p".$db_pwd." ".$db_name." < ".$name;
+
+        exec($exec, $info, $status);
+
+        return $status;
+    }
+
+    /**
+ * mysql导出sql文件
+ *
+ * @param      $bak_path   备份的路径,需要全路径
+ * @param null $mysql_path mysql的安装路径,需要到mysql安装路径的bin文件夹下
+ * @param null $bak_name   备份的名字
+ * @param null $username   数据库用户名
+ * @param null $password   数据库的密码
+ * @param null $database   要操作的数据库
+ *
+ * @return mixed  成功返回0,失败返回1
+ */
+    public function mysql_back($bak_path, $mysql_path = null, $bak_name = null, $username = null, $password = null, $database = null)
+    {
+        //设置时区,以防时区不正常的时候引起的错误
+        date_default_timezone_set("Asia/Shanghai");
+
+        //数据库账号
+        $db_user = $username ?? config('database.username');
+        //数据库密码
+        $db_pwd = $password ?? config('database.password');
+        //数据库名
+        $db_name = $database ?? config('database.database');
+        //备份文件名
+        $filename = $bak_name ?? (date("Y-m-d")."-".time());
+        //数据库文件存储路径
+        if (!is_dir($bak_path)) {
+            mkdir($bak_path);
+        }
+        $name = str_replace('\\', '/', $bak_path).'/'.$filename.'.sql';
+        //mysql路径
+        $mysql     = $mysql_path ?? "D:/phpStudy/PHPTutorial/MySQL/bin";
+        $dump_path = str_replace('\\', '/', $mysql).'/'.'mysqldump';
+        //要执行的命令
+        $exec = $dump_path." -u".$db_user." -p".$db_pwd." ".$db_name." > ".$name;
+
+        exec($exec, $info, $status);
+
+        return $status;
+    }
+
+    /**
+ * 循环删除目录和文件
+ *
+ * @param string $dir_name 目录名
+ *
+ * @return bool
+ */
+    public static function delete_dir_file($dir_name)
+    {
+        $result = false;
+        if (is_dir($dir_name)) { //检查指定的文件是否是一个目录
+        if ($handle = opendir($dir_name)) {   //打开目录读取内容
+            while (false !== ($item = readdir($handle))) { //读取内容
+                if ($item != '.' && $item != '..') {
+                    if (is_dir($dir_name.DS.$item)) {
+                        delete_dir_file($dir_name.DS.$item);
+                    } else {
+                        unlink($dir_name.DS.$item);  //删除文件
+                    }
+                }
+            }
+            closedir($handle);  //打开一个目录，读取它的内容，然后关闭
+            if (rmdir($dir_name)) { //删除空白目录
+                $result = true;
+            }
+        }
+        }
+
+        return $result;
+    }
+
+    public static function return_json($status, $code, $message, $data = [])
+    {
+        $data = ['status' => $status,'code' => $code,'message' => $message,'data' => $data];
+
+        return json_encode($data, 320);
+    }
 }
